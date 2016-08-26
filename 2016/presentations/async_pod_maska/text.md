@@ -230,16 +230,14 @@ Python ukrywa przed nami takie szczegóły implementacyjne za pomocą obiektu
         print(file_descriptor)
 
 Z naszego punktu widzenia intresujący jest fakt, że pod deskryptorem pliku może
-kryć się dużo więcej niż tylko zwykłe pliki na dysku. Okazuje się, że
-komunikację przez sieć także obsługuje się za pomocą tego samego mechanizmu.
+kryć się dużo więcej niż tylko zwykłe pliki na dysku.  Deskryptor pliku jest
+więc pewną abstrakcją pozwalającą odnosić się w ten sam sposób to różnych
+urządzeń wejścia-wyjścia: dysku, karty sieciowej, a nawet ekranu.
 
-Deskryptor pliku jest więc pewną abstrakcją pozwalającą odnosić się w ten sam
-sposób to różnych urządzeń wejścia-wyjścia: dysku, karty sieciowej, a nawet
-ekranu.
-
-W przypadku komunikacji sieciowe sposób uzyskania deskryptora jest co prawda
-bardziej skomplikowany niż proste `open()`, ale sam odczyt i zapis działają tak
-samo.
+Dzięki temu komunikację przez sieć obsługuje się za pomocą tego samego
+mechanizmu co zwykłe pliki. Co prawda sposób uzyskania takiego sieciowego
+deskryptora bardziej skomplikowany niż proste `open()`, ale sam odczyt i zapis
+działają tak samo.
 
 Prosty serwer akceptujący połączenia na porcie 1234 wygląda tak:
 
