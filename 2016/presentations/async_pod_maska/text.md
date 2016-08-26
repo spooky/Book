@@ -117,7 +117,7 @@ sam język wbudowany jest mechanizm przełączania kontekstu. Tym mechanizmem s�
 mianowicie generatory.
 
 Dokładniej, użycie instrukcji `yield` zmienia funkcję w obiekt generatora (de
-facto *proces*) któ©y możemy uruchomić lub zatrzymać. To czego brakuje, to
+facto *proces*) który możemy uruchomić lub zatrzymać. To czego brakuje, to
 scheduler, jednak bardzo łatwo napisać własny, chociażby przełączając procesy
 po kolei:
 
