@@ -17,7 +17,7 @@ a na koniec poskładam wszystko w prosty, ale asynchroniczny i kompatybilny z
 
 ## Współbieżność i przełączanie kontekstu
 
-Żeby zacząć w ogóle rozmawiać o programowaniu asynchronicznym, wypadałoby się
+Żeby zacząć rozmawiać o programowaniu asynchronicznym, wypadałoby się
 najpierw zająć modelem wykonania programu na komputerze.
 
 Dla uproszczenia załóżmy, że nasz komputer ma tylko jeden procesor, a
@@ -40,7 +40,7 @@ działanie ALU i decyduje który proces jest w danym momencie wykonywany.
 
 Oznacza to, że "tak naprawdę" ALU ciągle wykonuje tylko jeden program na raz,
 ale scheduler przełącza aktywne procesy tak szybko, że nikt nic nie widzi.
-Skomplikowana nazwa na taki model to *współbieżność* (ang. *concurrency*).
+Fachowa/Formalna nazwa na taki model to *współbieżność* (ang. *concurrency*).
 
 Wykonywana przez scheduler podmiana aktywnego procesu nazywa się
 *przełączaniem kontekstu* (ang. context switching).
@@ -192,7 +192,7 @@ TODO: wkleić diagram
 Jest to wykonalne, ale kod który realizuje taką operację jest niezwykle
 skomplikowany, gdyż musi brać pod uwagę, że `os_print` może rzucić wyjątkiem,
 zawierać kilka `yield`ów (np. w pętli) i tak dalej. Ostatecznie jest to ponad
-30 linii kodu które musielibyśmy wklejać aby zawołać *każdą* funkcję
+30 linii kodu [citation needed - link do PEPa] które musielibyśmy wklejać aby zawołać *każdą* funkcję
 wejścia-wyjścia.
 
 Python 3.4 rozwiązuje ten problem dostarczając dodatkowe słowo kluczowe `yield
@@ -219,7 +219,7 @@ kontekstach, na przykład gdy chcemy napisać rekurencyjny generator:
 No dobrze, ale wyświetlanie rzeczy na ekranie nie jest zbyt ekscytujące, a o
 programowaniu asynchronicznym rozmawia się zazwyczaj w konktekście obsługi
 sieci. Żeby zobaczyć jak jedno ma się do drugiego, musimy odłożyć na chwilę
-problem przełączania procesów, a zająć się zająć się obsługą wejścia-wyjścia na
+problem przełączania procesów, a zająć się obsługą wejścia-wyjścia na
 poziomie systemu operacyjnego.
 
 ## Deskryptory plików i gniazda sieciowe
@@ -260,7 +260,7 @@ deskryptora bardziej skomplikowany niż proste `open()`, ale sam odczyt i zapis
 działają tak samo: `accept()` jest odpowiednikiem `open()`, `send()` to
 `write()`, a `recv()` to `read()`.
 
-Prosty serwer akceptujący połączenia na porcie 1234 wygląda tak:
+Prosty serwer akceptujący połączenia na porcie 1234 wygląda następująco:
 
     import os
     import socket
@@ -318,8 +318,8 @@ deskryptor wypluł z siebie zdarzenie.
 ## Zakończenie
 
 TODO `asyncio` to tylko API, `yield from` jest użyteczne poza `asyncio`. Python
-3.5 wprowadził nową składnię, `async def` i `await`, ale zasada działania jest
-taka sama.
+3.5 wprowadził nową składnię, `async def` i `await` [opisac dlaczego 
+wprowadził - zwlaszcza `async`], ale zasada działania jest taka sama.
 
 ## Linki
 
