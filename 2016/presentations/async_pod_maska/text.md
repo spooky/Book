@@ -31,7 +31,8 @@ instrukcje programu umieszczone w kolejnych komórkach pamięci. Ważne jest to,
 
 Pojawia się zatem pytanie jak to możliwe, że na jednym komputerze wyposażonym w
 jeden procesor działa jednocześnie kilka programów? W istocie, proste systemy
-operacyjne (np. DOS) pozwalają uruchamiać jednocześnie tylko jeden proces na raz.
+operacyjne (np. DOS) pozwalają uruchamiać jednocześnie tylko jeden program na
+raz.
 
 Mechanizmem który pozwala kilku programom działać jednocześnie jest tzw.
 *scheduler*. Scheduler jest częścią systemu operacyjnego która nadzoruje
@@ -50,7 +51,7 @@ Wykonywana przez scheduler podmiana aktywnego procesu nazywa się
 No dobrze, ale nasz *scheduler* też jest programem. Jak w takim razie go
 uruchomić, skoro ALU zajęte jest wykonywaniem innego programu?
 
-Można to zrobić na dwa sposoby: albo na siłę odbierając procesorowi wykonywany
+Można to zrobić na dwa sposoby: albo "siłą" odbierając procesorowi wykonywany
 właśnie program, albo czekając aż tenże program jawnie zgłosi, że jest gotowy
 na przełączenie kontekstu.
 
@@ -59,8 +60,13 @@ wymusić przełączenie, scheduler korzysta z mechanizmu tzw. *przerwania
 zegarowego* (ang. *timer interrupt*). Przerwanie to specjalny układ
 elektroniczny, który pozwala zainstalować wewnątrz procesora niewielką funkcję,
 która będzie uruchamiana przez ALU z zadaną częstotliwością, niezależnie od
-głównego programu. Linux, dla przykładu, konfiguruje to przerwanie aby
-uruchamiać scheduler 100 razy na sekundę.
+głównego programu. Przerwanie, jak sama nazwa wskazuje, zatrzymuje "w pół
+kroku" aktualnie wykonywany program, wykonuje zainstalowaną funkcję (nazywaną
+*funkcją obsługi przerwania*, ang. *interrupt service routine*) a następnie wznawia
+główny program jak gdyby nigdy nic.
+
+Linux, dla przykładu, konfiguruje to przerwanie aby uruchamiać scheduler 100
+razy na sekundę.
 
 Drugi sposób wymaga, aby wszystkie(!) procesy co jakiś czas jawnie wołały
 funkcję schedulera. Tym modelem zajmiemy się później.
@@ -142,8 +148,8 @@ miniaturowy system operacyjny by się zawiesił wykonując w kółko tylko jego:
     def rogue_one(pid):
         yield # żeby stać się generatorem
 
-        for i in itertools.count():
-            print(pid, i)
+        while True:
+            print(pid, "I rebel!)
             # nie wołamy "yield" wewnątrz pętli
 
     processes = [ this_is_a_process(1), this_is_a_process(2), rogue_one(3) ]
@@ -158,25 +164,39 @@ wymaga aby programy napisane były w specyficzny sposób.
 
 Spróbujmy nieco ułatwić pisanie programów poprawnie korzystających z tego modelu.
 
-
 ## Kompozycja generatorów
 
-Jednym ze sposobów aby to zapewnić, jest uruchamianie schedulera za każdym
-razem gdy program prosi system operacyjny o jakiś rodzaj operacji
-wejścia-wyjścia, np. o odczytanie stanu klawiatury albo wyświetlenie czegoś na
-ekranie.  W naszym przykładzie byłoby to wywołanie funkcji `print`:
+Jednym ze sposobów aby to zapewnić by program zachowywał się "grzecznie" w
+modelu kooperacyjnym, jest uruchamianie schedulera za każdym razem gdy program
+prosi system operacyjny o jakiś rodzaj operacji wejścia-wyjścia, np. o
+odczytanie stanu klawiatury albo wyświetlenie czegoś na ekranie.  W naszym
+przykładzie byłoby to wywołanie funkcji `print`:
 
     def os_print(*args, **kwargs):
         print(*args, **kwargs)
-        run_scheduler()
+        # tutaj chcemy uruchomić scheduler
 
     def this_is_a_process(pid):
         for i in itertools.count():
             os_print(pid, i)
 
-TODO: Problemem jest linijka `run_scheduler()`.
+Pozostaje natomiast pytanie jak uruchomić scheduler. Jeśli po prostu zawołamy
+jakąś funkcję, to po jej zakończeniu wrócimy najpierw do `os_print` a potem z
+powrotem do tego samego `this_is_a_process`. Z kolei  jeśli w `os_print`
+użyjemy `yield`, to przerwiemy funkcję `os_print` i znów wrócimy do tego samego
+`this_is_a_process`. Potrzebujemy mechanizmu, który pozwoli poprosić inną
+funkcję, aby wykonała `yield` za nas.
 
-Python 3.4 rozwiązuje ten problem dostarczając dodatkowe słowo kluczowe `yield from`:
+TODO: wkleić diagram
+
+Jest to wykonalne, ale kod który realizuje taką operację jest niezwykle
+skomplikowany, gdyż musi brać pod uwagę, że `os_print` może rzucić wyjątkiem,
+zawierać kilka `yield`ów (np. w pętli) i tak dalej. Ostatecznie jest to ponad
+30 linii kodu które musielibyśmy wklejać aby zawołać *każdą* funkcję
+wejścia-wyjścia.
+
+Python 3.4 rozwiązuje ten problem dostarczając dodatkowe słowo kluczowe `yield
+from`, które wykonuje skomplikowane operacje za nas.
 
     def os_print(*args, **kwargs):
         print(*args, **kwargs)
@@ -237,7 +257,8 @@ urządzeń wejścia-wyjścia: dysku, karty sieciowej, a nawet ekranu.
 Dzięki temu komunikację przez sieć obsługuje się za pomocą tego samego
 mechanizmu co zwykłe pliki. Co prawda sposób uzyskania takiego sieciowego
 deskryptora bardziej skomplikowany niż proste `open()`, ale sam odczyt i zapis
-działają tak samo.
+działają tak samo: `accept()` jest odpowiednikiem `open()`, `send()` to
+`write()`, a `recv()` to `read()`.
 
 Prosty serwer akceptujący połączenia na porcie 1234 wygląda tak:
 
