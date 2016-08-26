@@ -308,4 +308,5 @@ taka sama.
 4. FreeBSD Developers Handbook, rozdział 7 "Sockets": https://www.freebsd.org/doc/en_US.ISO8859-1/books/developers-handbook/sockets.html
 5. Sangjin Han, "Scalable Event Multiplexing": https://people.eecs.berkeley.edu/~sangjin/2012/12/21/epoll-vs-kqueue.html
 6. Philip Roberts, "What the hack is the event loop anyway?", JSConf EU 2014: https://www.youtube.com/watch?v=8aGhZQkoFbQ
-7. Github, "Ghetto Asyncio": github.com:mrzechonek/ghetto-asyncio.git
+7. David Beazley, "Python Concurrency From the Ground Up", PyCon 2015: https://www.youtube.com/watch?v=MCs5OvhV9S4
+8. Github, "Ghetto Asyncio": github.com:mrzechonek/ghetto-asyncio.git
